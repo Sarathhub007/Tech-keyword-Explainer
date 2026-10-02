@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeWord Explainer - Testing Playground</title>
+  <style>
+    :root {
+      --bg: #0B0F19;
+      --card-bg: #111827;
+      --card-border: #1F2937;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --primary: #6366F1;
+      --primary-hover: #4F46E5;
+      --code-bg: #030712;
+      --highlight: #818CF8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 30px 20px 80px 20px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    .instruction-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.08));
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 12px;
+      padding: 18px 24px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .instruction-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .instruction-text h3 {
+      font-size: 16px;
+      margin-bottom: 4px;
+      color: #FFFFFF;
+    }
+
+    .instruction-text p {
+      font-size: 14px;
+      color: #D1D5DB;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .kw {
+      background: rgba(99, 102, 241, 0.2);
+      color: #A5B4FC;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: 1px dashed rgba(99, 102, 241, 0.4);
+      user-select: all;
+    }
+
+    .kw:hover {
+      background: rgba(99, 102, 241, 0.35);
+      color: #FFFFFF;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid #1E293B;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      font-size: 13.5px;
+      color: #93C5FD;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    code .token-keyword { color: #F43F5E; font-weight: 600; }
+    code .token-func { color: #60A5FA; }
+    code .token-str { color: #34D399; }
+    code .token-comment { color: #6B7280; font-style: italic; }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tag-item {
+      background: #1E293B;
+      color: #E2E8F0;
+      border: 1px solid #334155;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: all;
+    }
+
+    .tag-item:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .event-logger {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #9CA3AF;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+
+    .event-logger strong {
+      color: #10B981;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Extension Sandbox</span>
+      <h1>CodeWord Explainer Playground</h1>
+      <p class="lead">
+        Test the extension right here! Double-click on any coding keyword, technical term, or code sample below to see its instant explanation.
+      </p>
+    </header>
+
+    <div class="instruction-card">
+      <div class="instruction-icon">💡</div>
+      <div class="instruction-text">
+        <h3>How to test:</h3>
+        <p>Double-click directly on words like <span class="kw">closure</span>, <span class="kw">async</span>, <span class="kw">recursion</span>, or <span class="kw">docker</span>. A sleek glassmorphic popover will appear with definitions, syntax examples, docs links, and speech pronunciation!</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Section 1: JavaScript & Asynchronous Programming -->
+      <div class="card">
+        <h2 class="card-title">⚡ 1. Asynchronous JavaScript & Modern Web</h2>
+        <p class="card-p">
+          JavaScript uses an <span class="kw">event loop</span> to execute asynchronous callbacks without blocking the main execution thread. Modern developers prefer <span class="kw">async</span> and <span class="kw">await</span> over raw <span class="kw">promise</span> chains to prevent callback hell.
+        </p>
+        <pre><code><span class="token-comment">// Double-click on 'async', 'await', or 'fetch'</span>
+<span class="token-keyword">async</span> <span class="token-keyword">function</span> <span class="token-func">loadUserData</span>(userId) {
+  <span class="token-keyword">const</span> response = <span class="token-keyword">await</span> <span class="token-func">fetch</span>(`/api/users/${userId}`);
+  <span class="token-keyword">const</span> data = <span class="token-keyword">await</span> response.<span class="token-func">json</span>();
+  <span class="token-keyword">return</span> data;
+}</code></pre>
+      </div>
+
+      <!-- Section 2: Functional & Python Concepts -->
+      <div class="card">
+        <h2 class="card-title">🐍 2. Python & Functional Programming</h2>
+        <p class="card-p">
+          In Python, functions can be customized using a <span class="kw">decorator</span>. You can create inline functions using <span class="kw">lambda</span>, or produce lazy streaming sequences using <span class="kw">generator</span> and the <span class="kw">yield</span> keyword.
+        </p>
+        <pre><code><span class="token-comment">// Double-click on 'decorator', 'yield', 'generator'</span>
+<span class="token-keyword">def</span> <span class="token-func">fibonacci_stream</span>():
+    a, b = 0, 1
+    <span class="token-keyword">while</span> True:
+        <span class="token-keyword">yield</span> a
+        a, b = b, a + b</code></pre>
+      </div>
+
+      <!-- Section 3: Object-Oriented Principles -->
+      <div class="card">
+        <h2 class="card-title">🧱 3. Object-Oriented Programming (OOP)</h2>
+        <p class="card-p">
+          Object-oriented design models software around real-world objects. It is built on four core pillars: <span class="kw">encapsulation</span>, <span class="kw">inheritance</span>, <span class="kw">polymorphism</span>, and <span class="kw">abstraction</span>. Architectural cleanliness is maintained using the <span class="kw">solid</span> principles.
+        </p>
+        <pre><code><span class="token-keyword">class</span> <span class="token-func">PaymentProcessor</span> {
+  <span class="token-comment">// Polymorphic method</span>
+  <span class="token-func">processPayment</span>(amount) {
+    <span class="token-keyword">throw</span> <span class="token-keyword">new</span> Error(<span class="token-str">"Method must be implemented"</span>);
+  }
+}</code></pre>
+      </div>
+
+      <!-- Section 4: Data Structures & Algorithms -->
+      <div class="card">
+        <h2 class="card-title">🌳 4. Data Structures & Algorithms (DSA)</h2>
+        <p class="card-p">
+          Understanding <span class="kw">big o</span> complexity helps evaluate algorithmic efficiency. Common structures include <span class="kw">hashmap</span>, <span class="kw">linked list</span>, <span class="kw">stack</span>, <span class="kw">queue</span>, and <span class="kw">tree</span>. Techniques like <span class="kw">recursion</span>, <span class="kw">binary search</span>, and <span class="kw">dynamic programming</span> are essential for coding interviews.
+        </p>
+      </div>
+
+      <!-- Section 5: DevOps, Architecture & Databases -->
+      <div class="card">
+        <h2 class="card-title">🚢 5. DevOps, Cloud & Architecture</h2>
+        <p class="card-p">
+          Modern systems are packaged into containers using <span class="kw">docker</span> and managed in clusters with <span class="kw">kubernetes</span>. APIs are often designed using <span class="kw">rest</span> or <span class="kw">graphql</span>, authenticated using <span class="kw">jwt</span> or <span class="kw">oauth</span>, and backed by relational <span class="kw">sql</span> or distributed <span class="kw">redis</span> databases.
+        </p>
+      </div>
+
+      <!-- Section 6: Quick Clickable Keyword Wall -->
+      <div class="card">
+        <h2 class="card-title">🏷️ 6. Instant Keyword Wall (Double-click any tag)</h2>
+        <p class="card-p">Double-click any item in this tag wall to test immediate lookup:</p>
+        <div class="tag-grid">
+          <div class="tag-item">closure</div>
+          <div class="tag-item">hoisting</div>
+          <div class="tag-item">destructuring</div>
+          <div class="tag-item">currying</div>
+          <div class="tag-item">debounce</div>
+          <div class="tag-item">throttle</div>
+          <div class="tag-item">generics</div>
+          <div class="tag-item">interface</div>
+          <div class="tag-item">useState</div>
+          <div class="tag-item">useEffect</div>
+          <div class="tag-item">singleton</div>
+          <div class="tag-item">factory</div>
+          <div class="tag-item">websocket</div>
+          <div class="tag-item">cors</div>
+          <div class="tag-item">git</div>
+          <div class="tag-item">acid</div>
+          <div class="tag-item">regex</div>
+          <div class="tag-item">memory leak</div>
+          <div class="tag-item">garbage collection</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="event-logger" id="eventLogger">
+    Last double-clicked: <strong id="lastClickedText">None</strong>
+  </div>
+
+  <script>
+    document.addEventListener('dblclick', () => {
+      const sel = window.getSelection().toString().trim();
+      if (sel) {
+        document.getElementById('lastClickedText').textContent = '"' + sel + '"';
+      }
+    });
+  </script>
+</body>
+</html>
